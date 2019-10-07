@@ -4,29 +4,60 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.Locale;
+
+import javax.swing.JOptionPane;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
 public class BlueMarble {
-	
+
 	private String API_KEY = "7u1nv3v73ROS0u2F65J7w14pnGpjzwCv6cruBzes";
 	private String dateAsString;
 	private String quality = "natural";
 	private String caption;
 	private String nasaImageName;
 
+	public boolean checkDate() throws ParseException {
+
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+		Date selectedDate = format.parse(dateAsString);
+		Date currentDate = format.parse(LocalDate.now().toString());
+		if (selectedDate.before(currentDate)) {
+			return true;
+		} else {
+			JOptionPane.showMessageDialog(null, "Please select past date.");
+		}
+		return false;
+	}
+
+	public boolean checkQuality() throws ParseException {
+
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+		Date selectedDate = format.parse(dateAsString);
+		Date currentDate = format.parse("2018-6-1");
+		if (selectedDate.before(currentDate)) {
+			return true;
+		}
+		return false;
+	}
+
 	public static InputStream getMostRecentImage() {
 		BlueMarble blueMarble = new BlueMarble();
 		blueMarble.setDate(LocalDate.now().minusDays(1).toString());
 		return blueMarble.getImage();
 	}
-	
+
 	public void setDate(String date) {
 		this.dateAsString = date;
 	}
-	
+
 	public InputStream getImage() {
 		try {
 			getMetaData();
